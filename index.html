@@ -9,28 +9,30 @@
         .container { width: 100%; max-width: 950px; background: white; border: 2px solid var(--navy); border-radius: 12px; padding: 30px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); margin-bottom: 150px; }
         .header { background: var(--navy); color: white; padding: 20px; text-align: center; border-radius: 50px; margin-bottom: 25px; font-weight: bold; font-size: 1.4rem; }
         .page { display: none; } .active { display: block; }
-        
         .lang-select { text-align: center; padding: 50px 0; }
         .lang-btn { width: 250px; padding: 30px; margin: 15px; font-size: 1.5rem; cursor: pointer; border-radius: 15px; border: 3px solid var(--navy); background: white; color: var(--navy); transition: 0.3s; font-weight: bold; }
         .lang-btn:hover { background: var(--navy); color: white; }
-
         .info-box { background: var(--light-navy); border-left: 5px solid var(--navy); padding: 18px; margin-bottom: 25px; font-size: 0.95rem; line-height: 1.7; color: #1a2a44; }
         .input-group { margin-bottom: 15px; text-align: left; }
         .input-group label { display: block; margin-bottom: 5px; font-weight: bold; }
         .input-group input, .input-group select { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
+        .birth-inputs { display: flex; gap: 5px; align-items: center; }
+        .birth-inputs input { text-align: center; padding: 12px 5px; border: 1px solid #ccc; border-radius: 4px; }
+        .grade-flex { display: flex; gap: 15px; align-items: flex-start; flex-wrap: wrap; margin-bottom: 15px; }
+        .grade-flex .input-group { margin-bottom: 0; flex: 1; min-width: 120px; }
+        .is13-group { flex: 2; min-width: 250px; }
+        .is13-options { display: flex; gap: 15px; padding: 5px 0; }
+        .is13-options label { font-weight: normal; cursor: pointer; display: flex; align-items: center; gap: 5px; }
+        .sub-guide { font-size: 0.82rem; color: #d9534f; font-weight: bold; margin-top: 2px; display: block; }
         .help-text { font-size: 0.85rem; color: #d9534f; margin-top: 5px; font-weight: bold; }
-        
         table { width: 100%; border-collapse: collapse; margin-bottom: 25px; }
         th { background: #eee; padding: 12px; border: 1px solid var(--border); font-size: 0.85rem; color: var(--navy); position: sticky; top: 0; z-index: 5; }
         td { border: 1px solid var(--border); padding: 12px; text-align: center; font-size: 0.95rem; }
         .q-text { text-align: left; padding: 12px 20px; }
-        
         .active-row { background-color: var(--highlight) !important; outline: 3px solid var(--focus-line); outline-offset: -3px; }
-        
         .btn-box { display: flex; justify-content: center; gap: 15px; margin-top: 30px; }
         button { padding: 15px 45px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; color: white; background: var(--navy); font-size: 1rem; }
         button:disabled { background: #999 !important; cursor: not-allowed; }
-        
         .progress-container { position: fixed; bottom: 0; left: 0; width: 100%; background: white; border-top: 3px solid var(--navy); padding: 20px; text-align: center; box-shadow: 0 -5px 15px rgba(0,0,0,0.1); z-index: 100; }
         .kb-guide { font-size: 1.1rem; color: #d9534f; font-weight: 800; margin-bottom: 10px; }
         .progress-bar-bg { width: 80%; max-width: 700px; height: 14px; background: #eee; border-radius: 10px; margin: 8px auto; overflow: hidden; border: 1px solid #ccc; }
@@ -52,9 +54,34 @@
         <div class="info-box" id="info0"></div>
         <div class="input-group"><label id="label-name"></label><input type="text" id="name"></div>
         <div class="input-group"><label id="label-gender"></label><select id="gender"><option value="" id="opt-gender-none"></option><option value="남" id="opt-gender-m"></option><option value="여" id="opt-gender-f"></option></select></div>
+        
+        <div class="input-group">
+            <label id="label-birth"></label>
+            <div class="birth-inputs">
+                <input type="text" id="birth-yy" placeholder="YYYY" maxlength="4" style="width: 80px;" oninput="moveFocus(this, 'birth-mm', 4)"> 
+              <input type="text" id="birth-mm" placeholder="MM" maxlength="2" style="width: 50px;" oninput="moveFocus(this, 'birth-dd', 2)">
+                <input type="text" id="birth-dd" placeholder="DD" maxlength="2" style="width: 50px;">
+            </div>
+        </div>
+
         <div class="input-group"><label id="label-interest"></label><input type="text" id="interest"></div>
         <div class="input-group"><label id="label-school"></label><input type="text" id="school"></div>
-        <div class="input-group"><label id="label-grade"></label><input type="number" id="grade"></div>
+        
+        <div class="grade-flex">
+            <div class="input-group">
+                <label id="label-grade"></label>
+                <input type="number" id="grade">
+            </div>
+            <div class="is13-group">
+                <label id="label-is13"></label>
+                <span class="sub-guide" id="guide-is13"></span>
+                <div class="is13-options">
+                    <label><input type="radio" name="is13" value="Yes"> Yes</label>
+                    <label><input type="radio" name="is13" value="No" checked> No</label>
+                </div>
+            </div>
+        </div>
+
         <div class="input-group"><label id="label-email"></label><input type="email" id="email"></div>
         <div class="input-group">
             <label id="label-phone"></label>
@@ -73,7 +100,6 @@
             <button onclick="checkP1()" id="btn-start"></button>
         </div>
     </div>
-
     <div id="survey-pages"></div>
 </div>
 
@@ -91,7 +117,7 @@
     let currentGlobalIdx = 0;
 
     const questions = {
-        ko: ["목공에 대한 수업을 듣는다.","정비사가 되기 위한 수업을 듣는다.","전자제품을 수리한다.","자동차를 수리한다.","기계를 설치하거나 수리한다.","중장비 기계나 장비를 운전한다.","기술 교육 (예, 산업디자인, 창업) 에 관한 수업을 듣는다.","훌륭한 정비사나 기술자와 일한다.","전기 장비를 설치한다.","식탁을 수리한다.","금속 가공 이나 기계공구를 이용한다.","공구를 가지고 작업을 한다.","물건을 제작한다.","작은 도구나 연장을 가지고 작업을 한다.","과학 서적이나 잡지를 읽는다.","연구소나 실험실에서 일한다.","과학 이론을 공부한다.","물리학 수업을 듣는다.","문제를 해결하기 위해 수학을 적용한다.","과학 프로젝트에 참여한다.","화학 수업을 듣는다.","생물학 수업을 듣는다.","학문적 또는 기술적 문제를 연구한다.","과학 전시관을 방문한다.","복잡한 문제에 대한 해결책을 찾는다.","연구설계를 한다.","실험을 한다.","문제의 원인을 조사한다.","소설이나 극본을 쓴다.","재능 있는 화가나 작가, 또는 조각가와 일한다.","음악을 작곡하거나 편곡한다.","스케치를 하거나 그림을 그린다.","가구, 의상, 포스터 등을 디자인한다.","악기를 연주한다.","초상화를 그리거나 사진을 찍는다.","시를 읽거나 쓴다.","미술이나 디자인에 대한 수업을 듣는다.","잡지나 신문에 원고를 써서 보낸다.","잡지를 편집한다.","그래픽 작품을 만든다.","미술관을 방문한다.","코미디나 연극에 참여하여 연기한다.","자선단체에서 일한다.","청소년 비행에 관해 연구한다.","인간관계에 대한 강의를 듣는다.","중요한 교육전문가나 치료사를 만난다.","사람들의 개인적인 문제를 도와준다.","심리학에 관한 논문이나 책을 읽는다.","초, 중, 고등학교에서 학생들을 가르친다.","장애인을 도와준다.","성인을 가르친다.","자원봉사 활동을 한다.","사람들이 일을 할 수 있도록 훈련시킨다.","어린 아이들을 돌보아 준다.","비영리 기관에서 일하거나 자원봉사활동을 한다.","신체적으로나 정서적으로 어려움이 있는 사람을 도와준다.","서비스업이나 사업체를 운영한다.","영업관련 회의에 참석한다.","행정관리나 리더십에 대한 강의를 듣는다.","다른 사람들의 일을 감독한다.","중요한 경영관리자나 지도자를 만난다.","목표를 달성할 수 있도록 단체를 이끌어 나간다.","어떤 단체에서 관리자로 일한다.","비즈니스나 사업 자문인으로 일한다.","사업 성공을 위한 전략을 배운다.","다른 사람에게 영향을 미친다.","중요한 결정을 한다.","자기사업을 시작한다.","상품판매를 위해 설명을 한다.","상품 판촉활동을 한다.","사무용 기기(예, 복사기, 팩스, 컴퓨터)를 조작한다.","정보 기록 시스템을 만든다.","제품이나 재료의 재고를 조사한다.","서류나 제품의 결함을 조사한다.","복잡한 서류를 작성한다.","지출한 내용을 상세히 기록한다.","회계학 수업을 듣는다.","사업상의 장부 정리를 위해 계산을 한다.","사무실에서 일한다.","기록이나 파일을 업데이트한다.","상품판매내역을 기록하는 것에 관한 수업을 듣는다.","업무와 관련된 메일이나 편지를 작성한다.","회의일정을 계획하고 준비한다.","조직 시스템을 개발한다.","전기 톱과 같은 목공 도구를 이용할 수 있다.","제도 도면을 그릴 수 있다.","자동차 오일이나 타이어를 교체할 수 있다.","드릴이나 그라인더와 같은 전동공구를 이용할 수 있다.","가구나 목공제품들을 새것처럼 수리할 수 있다.","간단한 전기고장은 수리할 수 있다.","가구를 수리할 수 있다.","많은 목공 연장을 사용할 수 있다.","간단한 배관문제는 수리할 수 있다.","방에 페인트칠을 할 수 있다.","목재로 간단한 물건을 만들 수 있다.","설계도를 보면 이해할 수 있다.","컴퓨터 설계 프로그램을 이용할 수 있다.","간단한 가전제품 (예: 식기세척기, TV 등) 고장은 수리할 수 있다","공식을 이용해 수학문제를 풀 수 있다.","과학 실험이나 조사를 할 수 있다.","과학문제 해결에 도움이 되는 자료를 찾는 방법을 알고 있다.","백혈구의 기능에 대해 설명할 수 있다.","간단한 화학구조 방정식을 설명할 수 있다.","인공위성이 지구로 떨어지지 않는 이유를 알고 있다.","우주의 \"빅뱅\" 이론에 대해 알고 있다.","유전학에서 DNA의 역할을 알고 있다.","과학 보고서를 작성할 수 있다.","공학용 계산기를 사용할 수 있다.","현미경을 사용할 수 있다.","단백질 함유량이 높은 음식 세 가지를 말할 수 있다.","논리적 사고력을 요구하는 퍼즐문제를 풀 수 있다.","세포의 유사분열 단계에 대해 알고 있다.","연극에서 역할을 맡아 연기를 할 수 있다.","그림을 그리거나 조각을 할 수 있다.","연설문을 작성할 수 있다.","패션 디자인을 할 수 있다.","악기를 연주할 수 있다.","편곡이나 작곡을 할 수 있다.","소설이나 시를 쓴다.","사진을 잘 찍을 수 있다.","집이나 사무실 장식을 할 수 있다.","제품 포장 디자인을 할 수 있다.","어떤 아이디어를 예술적으로 표현할 수 있다.","광고카피를 작성할 수 있다.","누군지를 구분할 수 있을 정도로 사람을 스케치할 수 있다.","대본을 쓸 수 있다.","다양한 부류의 사람들과 쉽게 대화한다.","다른 사람에게 설명을 잘한다.","사람들이 나를 찾아와 자신의 어려움을 이야기한다.","다른 사람을 잘 가르친다.","사람들을 편안하게 해주는 것을 잘한다.","화나 있거나 문제가 있는 사람들을 잘 돕는다.","아이들을 쉽게 가르친다.","물건이나 아이디어를 다루는 일보다 사람들과 함께 하는 일을 더 잘 한다.","사람들 사이의 관계를 잘 이해한다.","사람들을 즐겁게 해주는 것을 잘한다.","사람들이 미래를 계획하도록 잘 도와준다.","그룹토론을 촉진시킬 수 있다.","사람들이 다른 시각으로 상황을 보도록 도와줄 수 있다.","사람들의 비언어적 표현을 쉽게 이해할 수 있다.","성공적 지도자가 되는 방법을 알고 있다.","사람들 앞에서 말을 잘한다.","판촉활동을 잘 할 수 있다.","다른 사람들의 업무를 잘 조직할 수 있다.","영업을 잘한다.","토론을 잘한다.","설득을 잘한다.","목표달성을 위한 전략을 잘 세운다.","리더십이 있다.","사람들이 나의 방식대로 일을 하도록 잘 이끌어 간다.","친교 모임이나 업무와 관련된 조직이 잘 운영되도록 할 수 있다.","사람들에게 동기부여를 잘한다.","거래협상을 잘 한다.","다른 사람들이 업무를 잘 하도록 관리할 수 있다.","서류작업을 할 수 있다.","회계장부에 입출금을 기록할 수 있다.","수입과 지출내역을 정확하게 기록할 수 있다.","업무와 관련된 서신이나 메일을 작성할 수 있다.","단시간에 많은 서류작업을 할 수 있다.","컴퓨터에 자료를 정확하게 입력할 수 있다.","사무업무(예, 일상적 서류작업, 전화응대, 타이핑)를 수행할 수 있다.","문서작성 프로그램을 사용할 수 있다.","복사기를 사용할 수 있다.","회의일정을 계획하고 준비할 수 있다.","전 전화를 다른 사람에게 연결해 줄 수 있다.","회의 중 세부기록을 작성할 수 있다.","금융거래에 대한 기록을 할 수 있다.","기록물(예, 재고, 직원, 의료기록 등)을 잘 보관할 수 있다.","항공기 정비사","자동차 정비사","철도관련 기술자","기계 기술자","건설공사 감독자","용접기사","농산물 생산자","목수","트럭 기사","헬리콥터 조종사","전기기사","가구 제작자","버스 기사","산림관리원","기상학자","생물학자","천문학자","임상병리사","인류학자","화학자","식물학자","물리학자","연구 보조원","기술관련 저술가 (기술을 공식 문서로 작성하는 사람)","환경 분석가","지질학자","내과의사","외과의사","음악가","배우","가수","편곡자","작사가","예술가/화가","작가","작곡가","시나리오 작가","영화/비디오 편집자","사진작가","그래픽 아티스트/디자이너","일러스트레이터","미술 강사","교사","중독전문 상담사","언어치료사","결혼 및 가족문제 상담사","임상심리학자","상담심리학자","청소년 캠프 관리자","사회 복지사","재활 상담사","레크레이션 지도사","진로 상담사","지역 복지관 관장","학업 지도사","레크레이션 치료사","상품 구매자 (바이어)","제조업 사장","영업 관리자","공인 중개사","백화점 또는 대형마트 관리자","최고 경영자","영업사원","기업가","호텔 매니저","마케팅 임원/이사","금융 자산 관리사","부동산 자산 관리사","텔레마케터","재무 관리사","회계 담당자","예산 심사원","회계사","신용 조사원","세무 대리인","재무 분석가","경리 담당자","회계감사관","세무사","예산담당 직원","접수담당자","문서 정리원","의무 기록 관리자","품질관리 분석가","기계를 다루는 능력","과학적인 능력","예술적인 능력","가르치는 능력","판매하는 능력","사무적인 능력","손/도구 사용 능력","수학 능력","음악 능력","타인이해 능력","관리/경영 능력","자료/문서관리 능력"],
+        ko: ["목공에 대한 수업을 듣는다.","정비사가 되기 위한 수업을 듣는다.","전자제품을 수리한다.","자동차를 수리한다.","기계를 설치하거나 수리한다.","중장비 기계나 장비를 운전한다.","기술 교육 (예, 산업디자인, 창업) 에 관한 수업을 듣는다.","훌륭한 정비사나 기술자와 일한다.","전기 장비를 설치한다.","식탁을 수리한다.","금속 가공 이나 기계공구를 이용한다.","공구를 가지고 작업을 한다.","물건을 제작한다.","작은 도구나 연장을 가지고 작업을 한다.","과학 서적이나 잡지를 읽는다.","연구소나 실험실에서 일한다.","과학 이론을 공부한다.","물리학 수업을 듣는다.","문제를 해결하기 위해 수학을 적용한다.","과학 프로젝트에 참여한다.","화학 수업을 듣는다.","생물학 수업을 듣는다.","학문적 또는 기술적 문제를 연구한다.","과학 전시관을 방문한다.","복잡한 문제에 대한 해결책을 찾는다.","연구설계를 한다.","실험을 한다.","문제의 원인을 조사한다.","소설이나 극본을 쓴다.","재능 있는 화가나 작가, 또는 조각가와 일한다.","음악을 작곡하거나 편곡한다.","스케치를 하거나 그림을 그린다.","가구, 의상, 포스터 등을 디자인한다.","악기를 연주한다.","초상화를 그리거나 사진을 찍는다.","시를 읽거나 쓴다.","미술이나 디자인에 대한 수업을 듣는다.","잡지나 신문에 원고를 써서 보낸다.","잡지를 편집한다.","그래픽 작품을 만든다.","미술관을 방문한다.","코미디나 연극에 참여하여 연기한다.","자선단체에서 일한다.","청소년 비행에 관해 연구한다.","인간관계에 대한 강의를 듣는다.","중요한 교육전문가나 치료사를 만난다.","사람들의 개인적인 문제를 도와준다.","심리학에 관한 논문이나 책을 읽는다.","초, 중, 고등학교에서 학생들을 가르친다.","장애인을 도와준다.","성인을 가르친다.","자원봉사 활동을 한다.","사람들이 일을 할 수 있도록 훈련시킨다.","어린 아이들을 돌보아 준다.","비영리 기관에서 일하거나 자원봉사활동을 한다.","신체적으로나 정서적으로 어려움이 있는 사람을 도와준다.","서비스업이나 사업체를 운영한다.","영업관련 회의에 참석한다.","행정관리나 리더십에 대한 강의를 듣는다.","다른 사람들의 일을 감독한다.","중요한 경영관리자나 지도자를 만난다.","목표를 달성할 수 있도록 단체를 이끌어 나간다.","어떤 단체에서 관리자로 일한다.","비즈니스나 사업 자문인으로 일한다.","사업 성공을 위한 전략을 배운다.","다른 사람에게 영향을 미친다.","중요한 결정을 한다.","자기사업을 시작한다.","상품판매를 위해 설명을 한다.","상품 판촉활동을 한다.","사무용 기기(예, 복사기, 팩스, 컴퓨터)를 조작한다.","정보 기록 시스템을 만든다.","제품이나 재료의 재고를 조사한다.","서류나 제품의 결함을 조사한다.","복잡한 서류를 작성한다.","지출한 내용을 상세히 기록한다.","회계학 수업을 듣는다.","사업상의 장부 정리를 위해 계산을 한다.","사무실에서 일한다.","기록이나 파일을 업데이트한다.","상품판매내역을 기록하는 것에 관한 수업을 듣는다.","업무와 관련된 메일이나 편지를 작성한다.","회의일정을 계획하고 준비한다.","조직 시스템을 개발한다.","전기 톱과 같은 목공 도구를 이용할 수 있다.","제도 도면을 그릴 수 있다.","자동차 오일이나 타이어를 교체할 수 있다.","드릴이나 그라인더와 같은 전동공구를 이용할 수 있다.","가구나 목공제품들을 새것처럼 수리할 수 있다.","간단한 전기고장은 수리할 수 있다.","가구를 수리할 수 있다.","많은 목공 연장을 사용할 수 있다.","간단한 배관문제는 수리할 수 있다.","방에 페인트칠을 할 수 있다.","목재로 간단한 물건을 만들 수 있다.","설계도를 보면 이해할 수 있다.","컴퓨터 설계 프로그램을 이용할 수 있다.","간단한 가전제품 (예: 식기세척기, TV 등) 고장은 수리할 수 있다","공식을 이용해 수학문제를 풀 수 있다.","과학 실험이나 조사를 할 수 있다.","과학문제 해결에 도움이 되는 자료를 찾는 방법을 알고 있다.","백혈구의 기능에 대해 설명할 수 있다.","간단한 화학구조 방정식을 설명할 수 있다.","인공위성이 지구로 떨어지지 않는 이유를 알고 있다.","우주의 \"빅뱅\" 이론에 대해 알고 있다.","유전학에서 DNA의 역할을 알고 있다.","과학 보고서를 작성할 수 있다.","공학용 계산기를 사용할 수 있다.","현미경을 사용할 수 있다.","단백질 함유량이 높은 음식 세 가지를 말할 수 있다.","논리적 사고력을 요구하는 퍼즐문제를 풀 수 있다.","세포의 유사분열 단계에 대해 알고 있다.","연극에서 역할을 맡아 연기를 할 수 있다.","그림을 그리거나 조각을 할 수 있다.","연설문을 작성할 수 있다.","패션 디자인을 할 수 있다.","악기를 연주할 수 있다.","편곡이나 작곡을 할 수 있다.","소설이나 시를 쓴다.","사진을 잘 찍을 수 있다.","집이나 사무실 장식을 할 수 있다.","제품 포장 디자인을 할 수 있다.","어떤 아이디어를 예술적으로 표현할 수 있다.","광고카피를 작성할 수 있다.","누군지를 구분할 수 있을 정도로 사람을 스케치할 수 있다.","대본을 쓸 수 있다.","다양한 부류의 사람들과 쉽게 대화한다.","다른 사람에게 설명을 잘한다.","사람들이 나를 찾아와 자신의 어려움을 이야기한다.","다른 사람을 잘 가르친다.","사람들을 편안하게 해주는 것을 잘한다.","화나 있거나 문제가 있는 사람들을 잘 돕는다.","아이들을 쉽게 가르친다.","물건이나 아이디어를 다루는 일보다 사람들과 함께 하는 일을 더 잘 한다.","사람들 사이의 관계를 잘 이해한다.","사람들을 즐겁게 해주는 것을 잘한다.","사람들이 미래를 계획하도록 잘 도와준다.","그룹토론을 촉진시킬 수 있다.","사람들이 다른 시각으로 상황을 보도록 도와줄 수 있다.","사람들의 비언어적 표현을 쉽게 이해할 수 있다.","성공적 지도자가 되는 방법을 알고 있다.","사람들 앞에서 말을 잘한다.","판촉활동을 잘 할 수 있다.","다른 사람들의 업무를 잘 조직할 수 있다.","영업을 잘한다.","토론을 잘한다.","설득을 잘한다.","목표달성을 위한 전략을 잘 세운다.","리더십이 있다.","사람들이 나의 방식대로 일을 하도록 잘 이끌어 간다.","친교 모임이나 업무와 관련된 조직이 잘 운영되도록 할 수 있다.","사람들에게 동기부여를 잘한다.","거래협상을 잘 한다.","다른 사람들이 업무를 잘 하도록 관리할 수 있다.","서류작업을 할 수 있다.","회계장부에 입출금을 기록할 수 있다.","수입과 지출내역을 정확하게 기록할 수 있다.","업무와 관련된 서신이나 메일을 작성할 수 있다.","단시간에 많은 서류작업을 할 수 있다.","컴퓨터에 자료를 정확하게 입력할 수 있다.","사무업무(예, 일상적 서류작업, 전화응대, 타이핑)를 수행할 수 있다.","문서작성 프로그램을 사용할 수 있다.","복사기를 사용할 수 있다.","회의일정을 계획하고 준비할 수 있다.","전화를 다른 사람에게 연결해 줄 수 있다.","회의 중 세부기록을 작성할 수 있다.","금융거래에 대한 기록을 할 수 있다.","기록물(예, 재고, 직원, 의료기록 등)을 잘 보관할 수 있다.","항공기 정비사","자동차 정비사","철도관련 기술자","기계 기술자","건설공사 감독자","용접기사","농산물 생산자","목수","트럭 기사","헬리콥터 조종사","전기기사","가구 제작자","버스 기사","산림관리원","기상학자","생물학자","천문학자","임상병리사","인류학자","화학자","식물학자","물리학자","연구 보조원","기술관련 저술가 (기술을 공식 문서로 작성하는 사람)","환경 분석가","지질학자","내과의사","외과의사","음악가","배우","가수","편곡자","작사가","예술가/화가","작가","작곡가","시나리오 작가","영화/비디오 편집자","사진작가","그래픽 아티스트/디자이너","일러스트레이터","미술 강사","교사","중독전문 상담사","언어치료사","결혼 및 가족문제 상담사","임상심리학자","상담심리학자","청소년 캠프 관리자","사회 복지사","재활 상담사","레크레이션 지도사","진로 상담사","지역 복지관 관장","학업 지도사","레크레이션 치료사","상품 구매자 (바이어)","제조업 사장","영업 관리자","공인 중개사","백화점 또는 대형마트 관리자","최고 경영자","영업사원","기업가","호텔 매니저","마케팅 임원/이사","금융 자산 관리사","부동산 자산 관리사","텔레마케터","재무 관리사","회계 담당자","예산 심사원","회계사","신용 조사원","세무 대리인","재무 분석가","경리 담당자","회계감사관","세무사","예산담당 직원","접수담당자","문서 정리원","의무 기록 관리자","품질관리 분석가","기계를 다루는 능력","과학적인 능력","예술적인 능력","가르치는 능력","판매하는 능력","사무적인 능력","손/도구 사용 능력","수학 능력","음악 능력","타인이해 능력","관리/경영 능력","자료/문서관리 능력"],
         en: ["Take a woodworking class","Take a mechanic training course","Repair electronic devices","Repair cars","Install or repair machinery","Operate heavy equipment","Take a technical education class (e.g. Industrial Design & Entrepreneurship)","Work with a qualified mechanic/technician","Install electrical equipment","Repair or adjust a dining table","Process metals or use machine tools","Work with tools","Construct an object","Work with small tools","Read scientific publications or magazines","Work at a research institute or a lab","Study scientific principles and theories","Take a physics class","Apply math to solve problems","Participate in a scientific project","Take a chemistry class","Take a biology class","Investigate an academic or a technical issue","Visit a science museum or an exhibition","Find a solution to a complex problem","Design a research","Conduct an experiment","Investigate the cause(s) of a problem","Compose a novel or a script","Work with a talented artist, author, or a sculptor","Compose or arrange a musical piece","Draw or sketch","Design furniture, clothing, posters, etc.","Play a musical instrument","Paint or photograph a portrait","Read or write poetry","Take a class on art or design","Submit a manuscript to a magazine or a newspaper","Edit a magazine","Create a graphic artwork","Visit an art museum or gallery","Act in a comedy or a play","Work at a charity organization","Study juvenile delinquency","Listen to a lecture/keynote speech on social relationships","Connect with an education specialist or a therapist","Assist people with their personal issues","Read a paper or a book on psychology","Teach students at elementary, middle, or high school","Help people with disabilities","Teach adults","Participate in volunteer work","Train people to do work","Take care of kids","Work or volunteer at a non-profit organization","Help people struggling with physical or emotional difficulties","Run a company or a service business","Attend a sales-related meeting","Take a lecture on management or leadership","Supervise others' work","Connect with a prominent business administrator or a leader","Lead an organization to achieve specific goals","Work as a manager in an organization","Work as a business consultant","Learn strategies for business success","Influence others","Make an important decision","Start your own business","Describe a product for marketing purposes","Engage in sales promotion/marketing","Operate office equipment (ex. printer, fax, computer)","Create a systematic data storage","Inspect inventories of products and materials","Check for flaws and defects in products and documents","Draft a complex paperwork","Keep a detailed record of expenses","Take an accounting class","Do calculations for business bookkeeping","Work in an office","Update records or files","Take a class on keeping sales records","Compose a work-related letter/email","Plan and prepare a work meeting","Develop an organizational system","Operate woodworking tools like a chainsaw","Draw a technical drawing or a blueprint","Replace car oils or tires","Operate power tools like a drill or a grinder","Repair a furniture or a woodworking product like they are new","Fix simple electrical malfunctions","Repair a furniture","Operate multiple woodworking tools","Repair simple plumbing issues","Paint a room","Build a simple object with woodworking","Interpret a blueprint","Use a computer-aided design software","Fix simple home appliance malfunctions (dishwasher, TV, etc.)","Solve a mathematic problem using an equation","Conduct a scientific research/experiment","Able to find appropriate resources to support scientific problem-solving","Explain the functions of leukocytes (white blood cells)","Explain a simple chemical equation","Understand why satellites do not fall to Earth","Know about the Big Bang Theory","Understand the role of DNA in genetics","Write a lab report","Use a scientific/graphing calculator","Operate a microscope","Name three foods high in protein","Solve puzzles requiring critical thinking","Explain the stages of mitosis","Act a role in a play","Draw or sculpt","Draft a speech","Do fashion design","Play a musical instrument","Compose or arrange a musical piece","Write a novel or a poem","Take good photographs","Decorate a home or an office","Design product packaging","Artistically express an idea","Draft an ad copy","Draw a recognizable sketch","Write a script","Easily engage in a conversation with various types of people","Explain things to others","People come to me to talk about their difficulties","Teaching others","Comfort people","Help people with anger issues","Teach children","Better at working with people than working with objects or ideas","Sense the dynamics of interpersonal relationships","Entertain people","Help others plan for the future","Facilitate a group discussion","Help others to look at a situation from a different perspective","Understand conscious or unconscious nonverbal expressions","Know how to become a successful leader","Speak in front of an audience","Promote a product","Organize and distribute work","Sales promotion","Debate","Persuade others","Develop strategies for a specific goal","Have leadership skills","Lead others to work according to my workflow","Effectively run a social gathering or a work-related organization","Motivate others","Negotiate deals","Manage others to work efficiently","Do paperwork","Record deposits and withdrawals in an accounting book","Accurately record income and expenditures","Write a work-related letter or an email","Complete a large volume of paperwork in a short time period","Accurately enter data into a computer software","Do office work (routine paperwork, answer business calls, typing, etc.)","Use a document editing software","Use a copier","Plan and prepare work meetings","Connect phone calls to others","Take detailed notes of a meeting","Record business transactions","Store and manage records/data (ex. Inventory, staff and medical records)","Aircraft mechanic","Car mechanic","Railroad technician","Mechanical engineer","Construction supervisor","Welder","Farmer","Carpenter","Commercial driver","Helicopter pilot","Electrician","Cabinetmaker","Bus driver","Forest ranger","Meteorologist","Biologist","Astronomer","Medical laboratory technologist","Anthropologist","Chemist","Botanist","Physicist","Research assistant","Technical writer","Environmental analyst","Geologist","Physician","Surgeon","Musician","Actor","Singer","Arranger","Lyricist","Artist","Author","Composer","Screenwriter","Film/video editor","Photographer","Graphic artist/designer","Illlustrator","Art instructor","Teacher","Addiction therapist","Speech-Language Pathologist","Marriage and Family Therapist","Clinical psychologist","Counseling psychologist","Youth camp manager","Social worker","Rehab counselor","Recreation leader","Career counselor","Community welfare center director","Academic instructor","Recreation therapist","Purchasing Manager / Buyer","Owner of a manufacturing business","Sales manager","Real estate agent","Department store/supermarket manager","CEO","Sales representative","Entrepreneur","Hotel manager","Marketing executive","Financial planner","Real estate asset manager","Telesales Representative","Certified finance manager","Treasurer","Budget analyst","Accountant","Credit investigator","Tax representative","Financial analyst","Bookkeeper","Auditor","Tax accountant","Budget officer","Receptionist","File clerk","Medical records administrator","Quality control analyst","Machine-operating","Science","Art","Teaching","Sales","Officework","Dexterity (hand and tool-use)","Math","Music","Empathy","Business/management","Data and document management"]
     };
 
@@ -100,8 +126,11 @@
             header: "📝 전공탐색검사 (REVERA-고등용)",
             info0: "<b>[수험자 정보]</b> 모든 정보를 정확히 입력해 주세요.",
             labelName: "이름:", labelGender: "성별:", 
+            labelBirth: "생년월일 (YYYY-MM-DD):",
             labelInterest: "관심 계열 (예: 인문, 사회, 공학, 자연, 예체능, 의약, 교육, 생활과학 등):", 
-            labelSchool: "학교:", labelGrade: "학년:", labelEmail: "이메일 주소:", labelPhone: "핸드폰 번호:",
+            labelSchool: "학교:", labelGrade: "학년:", labelIs13: "13학년제인가요?",
+            guideIs13: "※ '13학년제 학교라면 'Yes'를 , 12학년제 학교라면 'No를 선택하세요.",
+            labelEmail: "이메일 주소:", labelPhone: "핸드폰 번호:",
             phoneHelp: "※ 한국 핸드폰 번호가 없으면 입력하지 않고 넘어가셔도 됩니다.",
             optNone: "선택하세요", optM: "남성", optF: "여성",
             btnNext: "다음 단계", btnPrev: "이전", btnStart: "검사 시작", btnFinish: "최종 제출",
@@ -125,8 +154,11 @@
             header: "📝 Career Interest Survey (REVERA)",
             info0: "<b>[Participant Information]</b> Please provide all information accurately.",
             labelName: "Name:", labelGender: "Gender:", 
+            labelBirth: "Date of Birth (YYYY-MM-DD):",
             labelInterest: "Field of Interest (e.g. Humanities, Social, Eng, Science, Art, Medicine, Edu, etc.):", 
-            labelSchool: "School:", labelGrade: "Grade:", labelEmail: "Email Address:", labelPhone: "Phone Number:",
+            labelSchool: "School:", labelGrade: "Grade:", labelIs13: "Is it a 13-grade system?",
+            guideIs13: "※ Select 'Yes' for 13-grade, 'No' for 12-grade systems.",
+            labelEmail: "Email Address:", labelPhone: "Phone Number:",
             phoneHelp: "※ Skip if you do not have a Korean phone number.",
             optNone: "Select", optM: "Male", optF: "Female",
             btnNext: "Next", btnPrev: "Back", btnStart: "Start Survey", btnFinish: "Submit",
@@ -155,9 +187,12 @@
         document.getElementById('info0').innerHTML = d.info0;
         document.getElementById('label-name').innerText = d.labelName;
         document.getElementById('label-gender').innerText = d.labelGender;
+        document.getElementById('label-birth').innerText = d.labelBirth;
         document.getElementById('label-interest').innerText = d.labelInterest;
         document.getElementById('label-school').innerText = d.labelSchool;
         document.getElementById('label-grade').innerText = d.labelGrade;
+        document.getElementById('label-is13').innerText = d.labelIs13;
+        document.getElementById('guide-is13').innerText = d.guideIs13;
         document.getElementById('label-email').innerText = d.labelEmail;
         document.getElementById('label-phone').innerText = d.labelPhone;
         document.getElementById('phone-help').innerText = d.phoneHelp;
@@ -197,11 +232,8 @@
         sp.innerHTML = "";
         sections.forEach((sec, idx) => {
             let html = `<div id="p${sec.id}" class="page"><div class="info-box"><b>[${d.secTitles[idx]}]</b><br>${d.secDescs[idx]}</div><table><thead><tr><th>No.</th>`;
-            if(sec.type === 'binary') {
-                html += `<th width="80">1(Y)</th><th width="80">2(N)</th></tr></thead><tbody>`;
-            } else {
-                html += `<th>7 (${d.high})</th><th>6</th><th>5</th><th>4 (${d.mid})</th><th>3</th><th>2</th><th>1 (${d.low})</th></tr></thead><tbody>`;
-            }
+            if(sec.type === 'binary') html += `<th width="80">1(Y)</th><th width="80">2(N)</th></tr></thead><tbody>`;
+            else html += `<th>7 (${d.high})</th><th>6</th><th>5</th><th>4 (${d.mid})</th><th>3</th><th>2</th><th>1 (${d.low})</th></tr></thead><tbody>`;
 
             for(let i = sec.start; i <= sec.end; i++){
                 html += `<tr id="row-${i-1}" onclick="highlightRow(${i-1})"><td class="q-text">${i}. ${questions[currentLang][i-1]}</td>`;
@@ -218,6 +250,15 @@
         go(0);
     }
 
+    // 생년월일 자동 이동 함수
+    function moveFocus(current, nextId, maxLength) {
+        current.value = current.value.replace(/[^0-9]/g, ''); // 숫자만 입력
+        if (current.value.length >= maxLength) {
+            const next = document.getElementById(nextId);
+            if(next) next.focus();
+        }
+    }
+
     function go(n) {
         document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
         const target = (n === -1) ? 'p-lang' : `p${n}`;
@@ -232,7 +273,7 @@
     }
 
     function checkP0() {
-        const fields = ['name', 'gender', 'interest', 'school', 'grade', 'email'];
+        const fields = ['name', 'gender', 'interest', 'school', 'grade', 'email', 'birth-yy', 'birth-mm', 'birth-dd'];
         for(let f of fields) if(!document.getElementById(f).value) return alert(ui[currentLang].alertInfo);
         go(1);
     }
@@ -294,33 +335,32 @@
     }
 
     function preventDup(s,r) {
-        for(let i=1;i<=5;i++) if(i!==r){ let o=document.querySelector(`input[name=\"r${i}\"]:checked`); if(o&&o.value===s.value){alert(currentLang==='ko'?'중복된 선택입니다.':'Duplicate selection.'); s.checked=false;}}
+        for(let i=1;i<=5;i++) if(i!==r){ let o=document.querySelector(`input[name="r${i}"]:checked`); if(o&&o.value===s.value){alert(currentLang==='ko'?'중복된 선택입니다.':'Duplicate selection.'); s.checked=false;}}
     }
 
     function finish(btn) {
+        const yy = document.getElementById('birth-yy').value, mm = document.getElementById('birth-mm').value, dd = document.getElementById('birth-dd').value;
+        const is13Val = document.querySelector('input[name="is13"]:checked').value;
         const data = {
             lang: currentLang, name: document.getElementById('name').value, gender: document.getElementById('gender').value,
-            interest: document.getElementById('interest').value, school: document.getElementById('school').value,
-            grade: document.getElementById('grade').value, email: document.getElementById('email').value,
-            phone: document.getElementById('phone').value, ranks: [], answers: []
+            birth: yy + '-' + mm + '-' + dd, interest: document.getElementById('interest').value, 
+            school: document.getElementById('school').value, grade: document.getElementById('grade').value, 
+            is13: is13Val, email: document.getElementById('email').value, phone: document.getElementById('phone').value, 
+            ranks: [], answers: []
         };
-        for(let i=1; i<=5; i++) data.ranks.push(document.querySelector(`input[name=\"r${i}\"]:checked`).value);
+        for(let i=1; i<=5; i++) data.ranks.push(document.querySelector(`input[name="r${i}"]:checked`).value);
         for(let i=0; i<264; i++) {
             let val = ""; for(let r=1; r<=7; r++) if(document.getElementById(`q${i}-${r}`)?.checked) val = r;
             data.answers.push(val);
         }
         if(data.answers.includes("")) return alert(currentLang==='ko'?'응답하지 않은 문항이 있습니다.':'Some questions are unanswered.');
 
-        // 제출 버튼 상태 변경
         btn.disabled = true;
         btn.innerText = ui[currentLang].btnSubmitting;
 
-        const url = "https://script.google.com/macros/s/AKfycbziE4u5-cIBEjsCAqw58ts11aNtpMGEp26Xi8mZ9WClNjnstQyPD3C1Y_LeBD_WaC9r2A/exec";
+        const url = "https://script.google.com/macros/s/AKfycbwq58rAeI9XvpNH6sk4hyJQMtLZ-TN8Bpkhbbay-LgR-Uzy_h_qour8zuY-BOkEtgJilA/exec";
         fetch(url, { method: 'POST', mode: 'no-cors', body: JSON.stringify(data) })
-        .then(() => { 
-            alert(currentLang==='ko'?'성공적으로 제출되었습니다!':'Submitted successfully!'); 
-            location.reload(); 
-        })
+        .then(() => { alert(currentLang==='ko'?'성공적으로 제출되었습니다!':'Submitted successfully!'); location.reload(); })
         .catch(() => {
             alert(currentLang==='ko'?'제출 중 오류가 발생했습니다. 다시 시도해주세요.':'Error occurred during submission.');
             btn.disabled = false;
